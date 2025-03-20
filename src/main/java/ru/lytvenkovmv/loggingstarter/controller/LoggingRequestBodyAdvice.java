@@ -9,7 +9,7 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
-import ru.lytvenkovmv.loggingstarter.properties.LoggingProperties;
+import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 import java.lang.reflect.Type;
@@ -20,7 +20,7 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Autowired
     private HttpServletRequest request;
     @Autowired
-    private LoggingProperties properties;
+    private LogHttpRequestProperties logHttpRequestProperties;
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -34,6 +34,11 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return !properties.getNoLogUriList().contains(request.getRequestURI());
+        for (String noLogUri : logHttpRequestProperties.getNoLogUriList()) {
+            if (request.getRequestURI().contains(noLogUri)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

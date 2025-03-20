@@ -2,8 +2,8 @@ package ru.lytvenkovmv.loggingstarter.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "logging-starter.logging")
-public class LoggingProperties {
+@ConfigurationProperties(prefix = "logging-starter.log-execution-time")
+public class LogExecTimeProperties {
     private Boolean enabled;
 
     public Boolean getEnabled() {
