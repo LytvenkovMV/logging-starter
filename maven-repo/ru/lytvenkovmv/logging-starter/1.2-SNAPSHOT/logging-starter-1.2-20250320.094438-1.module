@@ -1,0 +1,76 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "ru.lytvenkovmv",
+    "module": "logging-starter",
+    "version": "1.2-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "logging-starter-1.2-SNAPSHOT-plain.jar",
+          "url": "logging-starter-1.2-SNAPSHOT-plain.jar",
+          "size": 7175,
+          "sha512": "18c5001e6807f4a4a7059942511bf0a9726754137840f55c25a5a951a40cad7c8ab7564ff08e954b44abe1ae282eea93cc552a055673c25fb170a619b4f91475",
+          "sha256": "f5c24738b619c6a42ae4b4add736261af4e93d54eaa3c9004202f0b27e99358d",
+          "sha1": "e11205ccded1d263bfd175f18c2f5a4c387c64f3",
+          "md5": "6256c11f5856e511b7038760ac55a952"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter-web",
+          "version": {
+            "requires": "3.3.5"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter-aop",
+          "version": {
+            "requires": "3.3.5"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "logging-starter-1.2-SNAPSHOT-plain.jar",
+          "url": "logging-starter-1.2-SNAPSHOT-plain.jar",
+          "size": 7175,
+          "sha512": "18c5001e6807f4a4a7059942511bf0a9726754137840f55c25a5a951a40cad7c8ab7564ff08e954b44abe1ae282eea93cc552a055673c25fb170a619b4f91475",
+          "sha256": "f5c24738b619c6a42ae4b4add736261af4e93d54eaa3c9004202f0b27e99358d",
+          "sha1": "e11205ccded1d263bfd175f18c2f5a4c387c64f3",
+          "md5": "6256c11f5856e511b7038760ac55a952"
+        }
+      ]
+    }
+  ]
+}

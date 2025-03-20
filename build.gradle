@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'org.springframework.boot' version '3.3.5'
 }
 
 group = 'ru.lytvenkovmv'
@@ -25,5 +26,10 @@ publishing{
         maven {
             url = "file://${project.projectDir.toString()}/maven-repo/"
         }
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web:3.3.5'
+        implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.5'
     }
 }
