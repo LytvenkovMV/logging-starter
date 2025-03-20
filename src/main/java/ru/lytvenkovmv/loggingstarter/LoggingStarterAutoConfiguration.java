@@ -11,15 +11,15 @@ import ru.lytvenkovmv.loggingstarter.filter.LoggingFilter;
 public class LoggingStarterAutoConfiguration {
 
     @Bean
-    @Profile(value = "log-exec-time")
-    @ConditionalOnProperty(value = "link-shortener.logging.log-execution-time", havingValue = "true")
+    ///@Profile(value = "log-exec-time")
+    ////@ConditionalOnProperty(value = "link-shortener.logging.log-execution-time", havingValue = "true")
     public LoggingFilter loggingFilter() {
         return new LoggingFilter();
     }
 
     @Bean
-    @Profile(value = "log-exec-time")
-    @ConditionalOnProperty(value = "link-shortener.logging.log-execution-time", havingValue = "true")
+    ////@Profile(value = "log-exec-time")
+    /////@ConditionalOnProperty(value = "link-shortener.logging.log-execution-time", havingValue = "true")
     public LoggingAspect loggingAspect() {
         return new LoggingAspect();
     }

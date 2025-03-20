@@ -3,27 +3,27 @@
   <groupId>ru.lytvenkovmv</groupId>
   <artifactId>logging-starter</artifactId>
   <versioning>
-    <lastUpdated>20250320094438</lastUpdated>
+    <lastUpdated>20250320095748</lastUpdated>
     <snapshot>
-      <timestamp>20250320.094438</timestamp>
+      <timestamp>20250320.095748</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
-        <classifier>plain</classifier>
-        <extension>jar</extension>
-        <value>1.2-20250320.094438-1</value>
-        <updated>20250320094438</updated>
+        <extension>pom</extension>
+        <value>1.2-20250320.095748-1</value>
+        <updated>20250320095748</updated>
       </snapshotVersion>
       <snapshotVersion>
-        <extension>pom</extension>
-        <value>1.2-20250320.094438-1</value>
-        <updated>20250320094438</updated>
+        <classifier>plain</classifier>
+        <extension>jar</extension>
+        <value>1.2-20250320.095748-1</value>
+        <updated>20250320095748</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>module</extension>
-        <value>1.2-20250320.094438-1</value>
-        <updated>20250320094438</updated>
+        <value>1.2-20250320.095748-1</value>
+        <updated>20250320095748</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
