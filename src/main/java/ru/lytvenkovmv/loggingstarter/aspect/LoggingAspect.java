@@ -13,7 +13,6 @@ public class LoggingAspect {
     Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Around("@annotation(ru.lytvenkovmv.loggingstarter.annotation.LogExecutionTime)")
-    @Pointcut()
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.nanoTime();
 
