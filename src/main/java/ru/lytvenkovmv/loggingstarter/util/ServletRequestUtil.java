@@ -1,5 +1,9 @@
 package ru.lytvenkovmv.loggingstarter.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.util.Strings;
 
@@ -28,11 +32,33 @@ public class ServletRequestUtil {
                     String value = entry.getValue();
 
                     if (maskedHeaders.contains(header)) {
-                        value = "*".repeat(value.length());
+                        value = "***";
                     }
 
                     return header + "=" + value;
                 })
                 .collect(Collectors.joining(", "));
+    }
+
+    public static String maskBody(Object body, List<String> maskedFields) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.valueToTree(body);
+
+        maskedFields.forEach(f -> maskFieldRecursive(jsonNode, f));
+
+        return jsonNode.toString();
+    }
+
+    private static void maskFieldRecursive(JsonNode jsonNode, String maskedField) {
+        if (jsonNode.isObject()) {
+            ObjectNode objectNode = (ObjectNode) jsonNode;
+
+            if (objectNode.has(maskedField)) {
+                objectNode.put(maskedField, "***");
+            }
+
+            objectNode.fields()
+                    .forEachRemaining(entry -> maskFieldRecursive(entry.getValue(), maskedField));
+        }
     }
 }

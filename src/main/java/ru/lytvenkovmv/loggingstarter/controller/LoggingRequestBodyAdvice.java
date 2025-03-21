@@ -1,5 +1,6 @@
 package ru.lytvenkovmv.loggingstarter.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +27,21 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         String method = request.getMethod();
         String requestURI = request.getRequestURI() + ServletRequestUtil.formatQueryString(request);
+        String maskedBody;
+        try {
+            maskedBody = ServletRequestUtil.maskBody(body, logHttpRequestProperties.getMaskedFields());
 
-        log.info("Тело запроса: {} {} {}", method, requestURI, body);
+            log.info("Тело запроса: {} {} {}", method, requestURI, maskedBody);
+        } catch (JsonProcessingException ignored) {
+            log.warn("Не удалось маскировать тело запроса {} {}. Неверный формат JSON", method, requestURI);
+        }
 
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
 
     @Override
-    public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>>
+            converterType) {
         for (String noLogUri : logHttpRequestProperties.getNoLogUriList()) {
             if (request.getRequestURI().contains(noLogUri)) {
                 return false;
