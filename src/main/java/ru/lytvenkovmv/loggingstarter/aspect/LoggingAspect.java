@@ -13,14 +13,11 @@ public class LoggingAspect {
     Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Around("@annotation(ru.lytvenkovmv.loggingstarter.annotation.LogExecutionTime)")
-    @Pointcut()
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.nanoTime();
 
         try {
             return joinPoint.proceed();
-        } catch (Exception e) {
-            throw e.getCause();
         } finally {
             long stop = System.nanoTime();
             log.info("Время выполнения метода {}(): {} мкс", joinPoint.getSignature().getName(), (stop - start) / 1000);
