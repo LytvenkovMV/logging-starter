@@ -22,12 +22,12 @@ public class LoggingFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        for (String noLogUri : logHttpRequestProperties.getNoLogUriList()) {
-            if (request.getRequestURI().contains(noLogUri)) {
-                super.doFilter(request, response, chain);
+        boolean isNoLogUri = ServletRequestUtil.isNoLogUri(request.getRequestURI(), logHttpRequestProperties.getNoLogUriList());
 
-                return;
-            }
+        if (isNoLogUri) {
+            super.doFilter(request, response, chain);
+
+            return;
         }
 
         String method = request.getMethod();

@@ -1,11 +1,17 @@
 package ru.lytvenkovmv.loggingstarter.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.util.AntPathMatcher;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +20,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ServletRequestUtil {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String MASK = "***";
+
+    public static boolean isNoLogUri(String uri, List<String> noLogUriList) {
+        AntPathMatcher matcher = new AntPathMatcher();
+
+        for (String noLogUri : noLogUriList) {
+            if (matcher.match(noLogUri, uri)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public static String formatQueryString(HttpServletRequest request) {
 
@@ -29,10 +49,14 @@ public class ServletRequestUtil {
         return headersMap.entrySet().stream()
                 .map(entry -> {
                     String header = entry.getKey();
-                    String value = entry.getValue();
+                    String value = MASK;
 
-                    if (maskedHeaders.contains(header)) {
-                        value = "***";
+                    boolean isMasked = maskedHeaders.stream()
+                            .map(String::toLowerCase)
+                            .anyMatch(h -> h.contains(header.toLowerCase()));
+
+                    if (!isMasked) {
+                        value = entry.getValue();
                     }
 
                     return header + "=" + value;
@@ -40,25 +64,17 @@ public class ServletRequestUtil {
                 .collect(Collectors.joining(", "));
     }
 
-    public static String maskBody(Object body, List<String> maskedFields) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.valueToTree(body);
+    public static String maskBody(Object body, List<String> maskedPaths) throws Exception {
+        String bodyJson = OBJECT_MAPPER.writeValueAsString(body);
 
-        maskedFields.forEach(f -> maskFieldRecursive(jsonNode, f));
+        Configuration configuration = Configuration.builder()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .build();
 
-        return jsonNode.toString();
-    }
+        DocumentContext documentContext = JsonPath.using(configuration).parse(bodyJson);
 
-    private static void maskFieldRecursive(JsonNode jsonNode, String maskedField) {
-        if (jsonNode.isObject()) {
-            ObjectNode objectNode = (ObjectNode) jsonNode;
+        maskedPaths.forEach(path -> documentContext.map(path, (o, conf) -> MASK));
 
-            if (objectNode.has(maskedField)) {
-                objectNode.put(maskedField, "***");
-            }
-
-            objectNode.fields()
-                    .forEachRemaining(entry -> maskFieldRecursive(entry.getValue(), maskedField));
-        }
+        return documentContext.jsonString();
     }
 }
