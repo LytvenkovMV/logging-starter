@@ -18,11 +18,13 @@ import java.nio.charset.StandardCharsets;
 public class LoggingFilter extends HttpFilter {
     private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
     @Autowired
+    private ServletRequestUtil util;
+    @Autowired
     private LogHttpRequestProperties logHttpRequestProperties;
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        boolean isNoLogUri = ServletRequestUtil.isNoLogUri(request.getRequestURI(), logHttpRequestProperties.getNoLogUriList());
+        boolean isNoLogUri = util.isNoLogUri(request.getRequestURI(), logHttpRequestProperties.getNoLogUriList());
 
         if (isNoLogUri) {
             super.doFilter(request, response, chain);
@@ -31,8 +33,8 @@ public class LoggingFilter extends HttpFilter {
         }
 
         String method = request.getMethod();
-        String requestURI = request.getRequestURI() + ServletRequestUtil.formatQueryString(request);
-        String headers = "headers={" + ServletRequestUtil.maskHeaders(request, logHttpRequestProperties.getMaskedHeaders()) + "}";
+        String requestURI = request.getRequestURI() + util.formatQueryString(request);
+        String headers = "headers={" + util.maskHeaders(request, logHttpRequestProperties.getMaskedHeaders()) + "}";
 
         log.info("Поступил запрос: {} {} {}", method, requestURI, headers);
 

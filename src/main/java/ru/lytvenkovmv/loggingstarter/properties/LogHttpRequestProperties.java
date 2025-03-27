@@ -7,27 +7,9 @@ import java.util.List;
 
 @ConfigurationProperties(prefix = "logging-starter.log-http-request")
 public class LogHttpRequestProperties {
-    private Boolean enabled;
-    private Boolean logBodyEnabled;
     private List<String> noLogUriList = new ArrayList<>();
     private List<String> maskedHeaders = new ArrayList<>();
     private List<String> maskedFields = new ArrayList<>();
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Boolean getLogBodyEnabled() {
-        return logBodyEnabled;
-    }
-
-    public void setLogBodyEnabled(Boolean logBodyEnabled) {
-        this.logBodyEnabled = logBodyEnabled;
-    }
 
     public List<String> getNoLogUriList() {
         return noLogUriList;

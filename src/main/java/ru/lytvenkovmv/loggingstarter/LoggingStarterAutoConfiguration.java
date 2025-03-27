@@ -9,6 +9,7 @@ import ru.lytvenkovmv.loggingstarter.aspect.LoggingAspect;
 import ru.lytvenkovmv.loggingstarter.controller.LoggingRequestBodyAdvice;
 import ru.lytvenkovmv.loggingstarter.filter.LoggingFilter;
 import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
+import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 @AutoConfiguration
 @ConditionalOnProperty(prefix = "logging-starter",
@@ -42,5 +43,11 @@ public class LoggingStarterAutoConfiguration {
     @ConditionalOnBean(LoggingFilter.class)
     public LoggingRequestBodyAdvice loggingRequestBodyAdvice() {
         return new LoggingRequestBodyAdvice();
+    }
+
+    @Bean
+    @ConditionalOnBean(LoggingFilter.class)
+    public ServletRequestUtil servletRequestUtil() {
+        return new ServletRequestUtil();
     }
 }
