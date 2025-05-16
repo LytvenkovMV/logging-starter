@@ -1,12 +1,16 @@
 package ru.lytvenkovmv.loggingstarter.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 
 public class ServletRequestUtil {
     private static final String MASK = "***";
+    private final Logger log = LoggerFactory.getLogger(ServletRequestUtil.class);
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
     @Autowired
     private ObjectMapper objectMapper;
@@ -54,17 +59,30 @@ public class ServletRequestUtil {
                 .collect(Collectors.joining(", "));
     }
 
-    public String maskBody(Object body, List<String> maskedPaths) throws Exception {
-        Configuration configuration = Configuration.builder()
-                .jsonProvider(new JacksonJsonNodeJsonProvider())
-                .build();
+    public Object maskBody(Object body, List<String> maskedPaths) {
+        try {
+            JsonNode jsonNode = (body instanceof String)
+                    ? objectMapper.readTree((String) body)
+                    : objectMapper.valueToTree(body);
 
-        String bodyJson = body instanceof String ? (String) body : objectMapper.writeValueAsString(body);
+            Configuration configuration = Configuration.builder()
+                    .jsonProvider(new JacksonJsonNodeJsonProvider())
+                    .build();
+            DocumentContext documentContext = JsonPath.using(configuration).parse(jsonNode);
 
-        DocumentContext documentContext = JsonPath.using(configuration).parse(bodyJson);
+            for (String path : maskedPaths) {
+                try {
+                    documentContext.map(path, (o, conf) -> MASK);
+                } catch (PathNotFoundException e) {
+                    log.warn("Не удалось маскировать поле в теле запроса. Путь {} не найден", path);
+                }
+            }
 
-        maskedPaths.forEach(path -> documentContext.map(path, (o, conf) -> MASK));
+            return documentContext.jsonString();
+        } catch (Exception e) {
+            log.warn("Не удалось маскировать тело запроса {}", e.getMessage(), e);
 
-        return documentContext.jsonString();
+            return body;
+        }
     }
 }

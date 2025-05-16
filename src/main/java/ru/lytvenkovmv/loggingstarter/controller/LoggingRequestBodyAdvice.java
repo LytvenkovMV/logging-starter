@@ -28,14 +28,9 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         String method = request.getMethod();
         String requestURI = request.getRequestURI() + util.formatQueryString(request);
-        String maskedBody;
-        try {
-            maskedBody = util.maskBody(body, logHttpRequestProperties.getMaskedFields());
+        Object maskedBody = util.maskBody(body, logHttpRequestProperties.getMaskedFields());
 
-            log.info("Тело запроса: {} {} {}", method, requestURI, maskedBody);
-        } catch (Exception e) {
-            log.warn("Не удалось маскировать тело запроса {} {}", method, requestURI, e);
-        }
+        log.info("Тело запроса: {} {} {}", method, requestURI, maskedBody);
 
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
