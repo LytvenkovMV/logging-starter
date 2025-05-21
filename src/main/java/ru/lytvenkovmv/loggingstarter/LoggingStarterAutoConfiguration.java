@@ -9,6 +9,9 @@ import ru.lytvenkovmv.loggingstarter.aspect.LoggingAspect;
 import ru.lytvenkovmv.loggingstarter.controller.LoggingRequestBodyAdvice;
 import ru.lytvenkovmv.loggingstarter.filter.LoggingFilter;
 import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
+import ru.lytvenkovmv.loggingstarter.service.MaskingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.TrimmingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.WritingRequestBodyService;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 @AutoConfiguration
@@ -49,5 +52,26 @@ public class LoggingStarterAutoConfiguration {
     @ConditionalOnBean(LoggingFilter.class)
     public ServletRequestUtil servletRequestUtil() {
         return new ServletRequestUtil();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "logging-starter.log-http-request",
+            value = "log-body-enabled",
+            havingValue = "true")
+    @ConditionalOnBean(LoggingFilter.class)
+    public WritingRequestBodyService writingRequestBodyService() {
+        return new WritingRequestBodyService();
+    }
+
+    @Bean
+    @ConditionalOnBean(WritingRequestBodyService.class)
+    public MaskingRequestBodyService maskingRequestBodyService() {
+        return new MaskingRequestBodyService();
+    }
+
+    @Bean
+    @ConditionalOnBean(WritingRequestBodyService.class)
+    public TrimmingRequestBodyService trimmingRequestBodyService() {
+        return new TrimmingRequestBodyService();
     }
 }
