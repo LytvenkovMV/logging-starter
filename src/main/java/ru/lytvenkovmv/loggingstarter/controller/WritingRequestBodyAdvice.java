@@ -1,8 +1,6 @@
 package ru.lytvenkovmv.loggingstarter.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.Order;
@@ -15,12 +13,10 @@ import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 @ControllerAdvice
-@Order(30)
-public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
-    private final Logger log = LoggerFactory.getLogger(LoggingRequestBodyAdvice.class);
+@Order(10)
+public class WritingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Autowired
     private HttpServletRequest request;
     @Autowired
@@ -32,17 +28,16 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-        String method = request.getMethod();
-        String requestURI = request.getRequestURI() + util.formatQueryString(request);
-        String trimmedBody = util.trimBody(context.get(), properties.getBodyMaxLength());
-
-        log.info("Тело запроса: {} {} {}", method, requestURI, trimmedBody);
+        if (!util.isNoLogUri(request.getRequestURI(), properties.getNoLogUriList())) {
+            String str = util.writeBodyAsString(body);
+            context.set(str);
+        }
 
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return Objects.nonNull(context.get());
+        return true;
     }
 }

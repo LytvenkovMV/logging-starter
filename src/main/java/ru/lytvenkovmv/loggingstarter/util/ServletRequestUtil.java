@@ -1,5 +1,6 @@
 package ru.lytvenkovmv.loggingstarter.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
@@ -59,11 +60,9 @@ public class ServletRequestUtil {
                 .collect(Collectors.joining(", "));
     }
 
-    public Object maskBody(Object body, List<String> maskedPaths) {
+    public String maskBody(String body, List<String> maskedPaths) {
         try {
-            JsonNode jsonNode = (body instanceof String)
-                    ? objectMapper.readTree((String) body)
-                    : objectMapper.valueToTree(body);
+            JsonNode jsonNode = objectMapper.readTree(body);
 
             Configuration configuration = Configuration.builder()
                     .jsonProvider(new JacksonJsonNodeJsonProvider())
@@ -84,5 +83,21 @@ public class ServletRequestUtil {
 
             return body;
         }
+    }
+
+    public String trimBody(String body, int bodyMaxLength) {
+        return body.length() > bodyMaxLength
+                ? body.substring(0, bodyMaxLength)
+                : body;
+    }
+
+    public String writeBodyAsString(Object body) {
+        try {
+            return objectMapper.writeValueAsString(body);
+        } catch (JsonProcessingException e) {
+            log.warn("Не удалось сериализовать тело запроса {}", e.getMessage(), e);
+        }
+
+        return null;
     }
 }
