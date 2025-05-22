@@ -10,7 +10,7 @@ public class LogHttpRequestProperties {
     private List<String> noLogUriList = new ArrayList<>();
     private List<String> maskedHeaders = new ArrayList<>();
     private List<String> maskedFields = new ArrayList<>();
-    private Integer bodyMaxLength = 1000;
+    private Integer bodyMaxLength = 10000;
 
     public List<String> getNoLogUriList() {
         return noLogUriList;
