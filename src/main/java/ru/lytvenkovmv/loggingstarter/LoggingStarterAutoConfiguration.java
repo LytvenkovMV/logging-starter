@@ -9,9 +9,12 @@ import ru.lytvenkovmv.loggingstarter.aspect.LoggingAspect;
 import ru.lytvenkovmv.loggingstarter.controller.LoggingRequestBodyAdvice;
 import ru.lytvenkovmv.loggingstarter.filter.LoggingFilter;
 import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
-import ru.lytvenkovmv.loggingstarter.service.MaskingRequestBodyService;
-import ru.lytvenkovmv.loggingstarter.service.TrimmingRequestBodyService;
-import ru.lytvenkovmv.loggingstarter.service.WritingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.AbstractChain;
+import ru.lytvenkovmv.loggingstarter.service.AbstractService;
+import ru.lytvenkovmv.loggingstarter.service.impl.MaskingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.impl.RequestBodyChain;
+import ru.lytvenkovmv.loggingstarter.service.impl.TrimmingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.impl.WritingRequestBodyService;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 @AutoConfiguration
@@ -55,23 +58,29 @@ public class LoggingStarterAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "logging-starter.log-http-request",
-            value = "log-body-enabled",
-            havingValue = "true")
-    @ConditionalOnBean(LoggingFilter.class)
-    public WritingRequestBodyService writingRequestBodyService() {
+//    @ConditionalOnProperty(prefix = "logging-starter.log-http-request",
+//            value = "log-body-enabled",
+//            havingValue = "true")
+//    @ConditionalOnBean(LoggingFilter.class)
+    public AbstractChain requestBodyChain() {
+        return new RequestBodyChain();
+    }
+
+    @Bean
+//    @ConditionalOnBean(RequestBodyChain.class)
+    public AbstractService writingRequestBodyService() {
         return new WritingRequestBodyService();
     }
 
     @Bean
-    @ConditionalOnBean(WritingRequestBodyService.class)
-    public MaskingRequestBodyService maskingRequestBodyService() {
+//    @ConditionalOnBean(WritingRequestBodyService.class)
+    public AbstractService maskingRequestBodyService() {
         return new MaskingRequestBodyService();
     }
 
     @Bean
-    @ConditionalOnBean(WritingRequestBodyService.class)
-    public TrimmingRequestBodyService trimmingRequestBodyService() {
+//    @ConditionalOnBean(WritingRequestBodyService.class)
+    public AbstractService trimmingRequestBodyService() {
         return new TrimmingRequestBodyService();
     }
 }

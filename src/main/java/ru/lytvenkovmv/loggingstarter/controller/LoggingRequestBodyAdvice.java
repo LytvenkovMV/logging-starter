@@ -22,7 +22,7 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Autowired
     private ServletRequestUtil util;
     @Autowired
-    AbstractChain chain;
+    AbstractChain<String> chain;
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -30,7 +30,7 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
         String requestURI = request.getRequestURI() + util.formatQueryString(request);
         String strBody = util.writeBodyAsString(body);
 
-        String processedBody = chain.next().doAction(strBody, chain);
+        String processedBody = chain.process(strBody, chain);
 
         log.info("Тело запроса: {} {} {}", method, requestURI, processedBody);
 

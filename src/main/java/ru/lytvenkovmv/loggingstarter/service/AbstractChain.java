@@ -1,5 +1,5 @@
 package ru.lytvenkovmv.loggingstarter.service;
 
-public interface AbstractChain {
-    AbstractChainService next();
+public interface AbstractChain<T> {
+    T process(T body, AbstractChain<T> chain);
 }
