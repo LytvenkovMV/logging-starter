@@ -58,29 +58,26 @@ public class LoggingStarterAutoConfiguration {
     }
 
     @Bean
-//    @ConditionalOnProperty(prefix = "logging-starter.log-http-request",
-//            value = "log-body-enabled",
-//            havingValue = "true")
-//    @ConditionalOnBean(LoggingFilter.class)
-    public AbstractChain requestBodyChain() {
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractChain<String> requestBodyChain() {
         return new RequestBodyChain();
     }
 
     @Bean
-//    @ConditionalOnBean(RequestBodyChain.class)
-    public AbstractService writingRequestBodyService() {
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractService<String> writingRequestBodyService() {
         return new WritingRequestBodyService();
     }
 
     @Bean
-//    @ConditionalOnBean(WritingRequestBodyService.class)
-    public AbstractService maskingRequestBodyService() {
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractService<String> maskingRequestBodyService() {
         return new MaskingRequestBodyService();
     }
 
     @Bean
-//    @ConditionalOnBean(WritingRequestBodyService.class)
-    public AbstractService trimmingRequestBodyService() {
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractService<String> trimmingRequestBodyService() {
         return new TrimmingRequestBodyService();
     }
 }
