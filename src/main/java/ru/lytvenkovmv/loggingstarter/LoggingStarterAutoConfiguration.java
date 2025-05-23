@@ -9,6 +9,12 @@ import ru.lytvenkovmv.loggingstarter.aspect.LoggingAspect;
 import ru.lytvenkovmv.loggingstarter.controller.LoggingRequestBodyAdvice;
 import ru.lytvenkovmv.loggingstarter.filter.LoggingFilter;
 import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
+import ru.lytvenkovmv.loggingstarter.service.AbstractChain;
+import ru.lytvenkovmv.loggingstarter.service.AbstractService;
+import ru.lytvenkovmv.loggingstarter.service.impl.MaskingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.impl.RequestBodyChain;
+import ru.lytvenkovmv.loggingstarter.service.impl.TrimmingRequestBodyService;
+import ru.lytvenkovmv.loggingstarter.service.impl.WritingRequestBodyService;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 @AutoConfiguration
@@ -49,5 +55,29 @@ public class LoggingStarterAutoConfiguration {
     @ConditionalOnBean(LoggingFilter.class)
     public ServletRequestUtil servletRequestUtil() {
         return new ServletRequestUtil();
+    }
+
+    @Bean
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractChain<String> requestBodyChain() {
+        return new RequestBodyChain();
+    }
+
+    @Bean
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractService<String> writingRequestBodyService() {
+        return new WritingRequestBodyService();
+    }
+
+    @Bean
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractService<String> maskingRequestBodyService() {
+        return new MaskingRequestBodyService();
+    }
+
+    @Bean
+    @ConditionalOnBean(LoggingRequestBodyAdvice.class)
+    public AbstractService<String> trimmingRequestBodyService() {
+        return new TrimmingRequestBodyService();
     }
 }
