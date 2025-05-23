@@ -9,8 +9,6 @@ import java.util.List;
 public class LogHttpRequestProperties {
     private List<String> noLogUriList = new ArrayList<>();
     private List<String> maskedHeaders = new ArrayList<>();
-    private List<String> maskedFields = new ArrayList<>();
-    private Integer bodyMaxLength = 10000;
 
     public List<String> getNoLogUriList() {
         return noLogUriList;
@@ -26,21 +24,5 @@ public class LogHttpRequestProperties {
 
     public void setMaskedHeaders(List<String> maskedHeaders) {
         this.maskedHeaders = maskedHeaders;
-    }
-
-    public List<String> getMaskedFields() {
-        return maskedFields;
-    }
-
-    public void setMaskedFields(List<String> maskedFields) {
-        this.maskedFields = maskedFields;
-    }
-
-    public Integer getBodyMaxLength() {
-        return bodyMaxLength;
-    }
-
-    public void setBodyMaxLength(Integer bodyMaxLength) {
-        this.bodyMaxLength = bodyMaxLength;
     }
 }

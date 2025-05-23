@@ -9,6 +9,8 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
+import ru.lytvenkovmv.loggingstarter.properties.AbstractLogBodyProperties;
+import ru.lytvenkovmv.loggingstarter.properties.LogRequestBodyProperties;
 import ru.lytvenkovmv.loggingstarter.service.AbstractChain;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
@@ -22,7 +24,9 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Autowired
     private ServletRequestUtil util;
     @Autowired
-    AbstractChain<String> chain;
+    AbstractChain<String, AbstractLogBodyProperties> chain;
+    @Autowired
+    LogRequestBodyProperties bodyProperties;
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -30,7 +34,7 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
         String requestURI = request.getRequestURI() + util.formatQueryString(request);
         String strBody = util.writeBodyAsString(body);
 
-        String processedBody = chain.process(strBody, chain);
+        String processedBody = chain.init().process(strBody, bodyProperties, chain);
 
         log.info("Тело запроса: {} {} {}", method, requestURI, processedBody);
 

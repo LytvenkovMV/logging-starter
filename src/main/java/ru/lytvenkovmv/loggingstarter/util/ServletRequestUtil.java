@@ -73,13 +73,13 @@ public class ServletRequestUtil {
                 try {
                     documentContext.map(path, (o, conf) -> MASK);
                 } catch (PathNotFoundException e) {
-                    log.warn("Не удалось маскировать поле в теле запроса. Путь {} не найден", path);
+                    log.warn("Не удалось маскировать поле в теле запроса или ответа. Путь {} не найден", path);
                 }
             }
 
             return documentContext.jsonString();
         } catch (Exception e) {
-            log.warn("Не удалось маскировать тело запроса {}", e.getMessage(), e);
+            log.warn("Не удалось маскировать тело запроса или ответа {}", e.getMessage(), e);
 
             return body;
         }
@@ -95,7 +95,7 @@ public class ServletRequestUtil {
         try {
             return objectMapper.writeValueAsString(body);
         } catch (JsonProcessingException e) {
-            log.warn("Не удалось сериализовать тело запроса {}", e.getMessage(), e);
+            log.warn("Не удалось сериализовать тело запроса или ответа {}", e.getMessage(), e);
         }
 
         return null;
