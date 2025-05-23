@@ -31,5 +31,13 @@ publishing{
         implementation 'org.springframework.boot:spring-boot-starter-web:3.3.5'
         implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.5'
         implementation 'com.jayway.jsonpath:json-path:2.9.0'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.5'
+
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
