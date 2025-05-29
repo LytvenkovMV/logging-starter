@@ -9,7 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import ru.lytvenkovmv.loggingstarter.properties.AbstractLogBodyProperties;
 import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
+import ru.lytvenkovmv.loggingstarter.properties.LogResponseBodyProperties;
+import ru.lytvenkovmv.loggingstarter.service.AbstractChain;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
 
 import java.io.IOException;
@@ -21,6 +24,10 @@ public class LoggingFilter extends HttpFilter {
     private ServletRequestUtil util;
     @Autowired
     private LogHttpRequestProperties logHttpRequestProperties;
+    @Autowired
+    private LogResponseBodyProperties logResponseBodyProperties;
+    @Autowired
+    private AbstractChain<String, AbstractLogBodyProperties> bodyChain;
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -43,8 +50,13 @@ public class LoggingFilter extends HttpFilter {
         try {
             super.doFilter(request, responseWrapper, chain);
 
-            String responseBody = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
-            log.info("Ответ: {} {} {} {}", method, requestURI, response.getStatus(), responseBody);
+            String strBody = "";
+            if (logResponseBodyProperties.isEnabled()) {
+                String responseBody = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
+                strBody = bodyChain.init().process(responseBody, logResponseBodyProperties, bodyChain);
+            }
+
+            log.info("Ответ: {} {} {} {}", method, requestURI, response.getStatus(), strBody);
         } finally {
             responseWrapper.copyBodyToResponse();
         }

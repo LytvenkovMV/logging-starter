@@ -1,0 +1,6 @@
+logging-starter:
+  log-request-body:
+    enabled: true
+    masked-fields:
+      - $.active
+    body-max-length: 20
