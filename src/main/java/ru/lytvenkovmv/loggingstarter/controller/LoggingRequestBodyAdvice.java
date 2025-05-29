@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
 import ru.lytvenkovmv.loggingstarter.properties.AbstractLogBodyProperties;
+import ru.lytvenkovmv.loggingstarter.properties.LogHttpRequestProperties;
 import ru.lytvenkovmv.loggingstarter.properties.LogRequestBodyProperties;
 import ru.lytvenkovmv.loggingstarter.service.AbstractChain;
 import ru.lytvenkovmv.loggingstarter.util.ServletRequestUtil;
@@ -24,9 +25,11 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Autowired
     private ServletRequestUtil util;
     @Autowired
-    AbstractChain<String, AbstractLogBodyProperties> chain;
+    private AbstractChain<String, AbstractLogBodyProperties> chain;
     @Autowired
-    LogRequestBodyProperties bodyProperties;
+    private LogHttpRequestProperties requestProperties;
+    @Autowired
+    private LogRequestBodyProperties bodyProperties;
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -44,6 +47,6 @@ public class LoggingRequestBodyAdvice extends RequestBodyAdviceAdapter {
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>>
             converterType) {
-        return true;
+        return !util.isNoLogUri(request.getRequestURI(), requestProperties.getNoLogUriList());
     }
 }
